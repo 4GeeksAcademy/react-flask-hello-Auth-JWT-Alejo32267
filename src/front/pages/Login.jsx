@@ -1,0 +1,74 @@
+
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useGlobalReducer from "../hooks/useGlobalReducer";
+
+export const Login = () => {
+    const [form, setForm] = useState({ email: "", password: "" });
+    const [error, setError] = useState(null);
+    const { dispatch } = useGlobalReducer();
+    const navigate = useNavigate();
+
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setError(null);
+
+        try {
+            const res = await fetch(import.meta.env.VITE_BACKEND_URL + "/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(form)
+            });
+
+            const data = await res.json();
+
+            if (res.ok) {
+                sessionStorage.setItem("token", data.access_token);
+                dispatch({ type: "set_token", payload: data.access_token });
+                dispatch({ type: "set_user", payload: data.user });
+                navigate("/private");
+            } else {
+                setError(data.msg || "Log in failed.");
+            }
+        } catch (err) {
+            console.error("Login error:", err);
+            setError("An error occurred during log in.");
+        }
+    };
+
+    return (
+        <div className="container mt-5" style={{ maxWidth: "400px" }}>
+            <h2 className="mb-4 text-center text-primary">Log In</h2>
+
+            {error && <div className="alert alert-danger text-center">{error}</div>}
+
+            <form onSubmit={handleLogin} className="shadow-lg p-4 rounded-4 bg-white">
+                <div className="mb-3">
+                    <input
+                        type="email"
+                        className="form-control rounded-3 border-2 p-3"
+                        placeholder="Email"
+                        value={form.email}
+                        onChange={e => setForm({ ...form, email: e.target.value })}
+                        required
+                    />
+                </div>
+                <div className="mb-4">
+                    <input
+                        type="password"
+                        className="form-control rounded-3 border-2 p-3"
+                        placeholder="Password"
+                        value={form.password}
+                        onChange={e => setForm({ ...form, password: e.target.value })}
+                        required
+                    />
+                </div>
+                <button type="submit" className="btn btn-primary w-100 py-2 rounded-3 text-white fw-semibold shadow-sm transition-all hover-bg-primary">
+                    Log In
+                </button>
+            </form>
+        </div>
+
+    );
+};

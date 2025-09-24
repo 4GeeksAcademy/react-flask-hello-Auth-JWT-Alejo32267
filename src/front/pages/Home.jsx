@@ -1,52 +1,28 @@
-import React, { useEffect } from "react"
-import rigoImageUrl from "../assets/img/rigo-baby.jpg";
-import useGlobalReducer from "../hooks/useGlobalReducer.jsx";
+import { Link } from "react-router-dom";
 
 export const Home = () => {
+    return (
 
-	const { store, dispatch } = useGlobalReducer()
+        <div className="container py-5">
 
-	const loadMessage = async () => {
-		try {
-			const backendUrl = import.meta.env.VITE_BACKEND_URL
+            <div className="text-center">
 
-			if (!backendUrl) throw new Error("VITE_BACKEND_URL is not defined in .env file")
+                <h1 className="display-3 fw-bold text-primary mb-4 animate__animated animate__fadeIn">Welcome to JWT Authorization App</h1>
 
-			const response = await fetch(backendUrl + "/api/hello")
-			const data = await response.json()
+                <p className="lead text-muted mb-5 animate__animated animate__fadeIn animate__delay-1s">
+                    Secure your application with JWT Authentication. Build your app with ease.
+                </p>
 
-			if (response.ok) dispatch({ type: "set_hello", payload: data.message })
+                <div className="footer mt-5 py-3 text-center">
+                    <p className="text-muted">
+                        Check the <a target="_blank" href="https://4geeks.com/docs/start/react-flask-template" className="text-primary text-decoration-none fw-semibold hover-link">documentation</a> and
+                        <a target="_blank" href="https://4geeks.com/interactive-coding-tutorial/jwt-authentication-with-flask-react" className="text-primary text-decoration-none fw-semibold hover-link">requirements</a>
+                    </p>
+                </div>
 
-			return data
+            </div>
 
-		} catch (error) {
-			if (error.message) throw new Error(
-				`Could not fetch the message from the backend.
-				Please check if the backend is running and the backend port is public.`
-			);
-		}
+        </div>
 
-	}
-
-	useEffect(() => {
-		loadMessage()
-	}, [])
-
-	return (
-		<div className="text-center mt-5">
-			<h1 className="display-4">Hello Rigo!!</h1>
-			<p className="lead">
-				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
-			</p>
-			<div className="alert alert-info">
-				{store.message ? (
-					<span>{store.message}</span>
-				) : (
-					<span className="text-danger">
-						Loading message from the backend (make sure your python 🐍 backend is running)...
-					</span>
-				)}
-			</div>
-		</div>
-	);
-}; 
+    );
+};
